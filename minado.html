@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: rgb(49, 49, 49);
+        }
+        
+        .game-container {
+            text-align: center;
+        }
+        
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(8, 40px);
+            grid-gap: 2px;
+            margin-top: 20px;
+        }
+        
+        .quadrado {
+            width: 40px;
+            height: 40px;
+            background-color: #ddd;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 18px;
+            cursor: pointer;
+            border-radius: 3px;
+            user-select: none;
+        }
+        
+        .quadrado.mina {
+            background-color: #ff4d4d;
+        }
+        
+        .quadrado.aberto {
+            background-color: #fcdeff;
+        }
+        
+        .quadrado.numero {
+            color: #333;
+        }
+    </style>
+    <title>Campo Minado</title>
+</head>
+
+
+<body>
+    <div class="game-container">
+        <h1>Campo Minado</h1>
+        <div class="grid" id="grid"></div>
+        <button class="botaoComeco" onclick="iniciarJogo()">Iniciar Jogo</button>
+    </div>
+    <script>
+        const numLinhas = 8;
+        const numColunas = 8;
+        const numMinas = 10;
+        let gridMinado = [];
+        let minasPlantadas = false;
+        let numQuadradosSemBombas;
+
+
+        function plantarMinas() {
+            numQuadradosSemBombas = numLinhas * numColunas - numMinas;
+            for (let i = 0; i < numMinas; i++) {
+                let linha, coluna;
+                do {
+                    linha = Math.floor(Math.random() * numLinhas);
+                    coluna = Math.floor(Math.random() * numColunas);
+                } while (gridMinado[linha][coluna] === 'mina');
+                gridMinado[linha][coluna] = 'mina';
+            }
+        }
+
+
+        function contarMinasAdjacentes(linha, coluna) {
+            let count = 0;
+            for (let i = Math.max(0, linha - 1); i <= Math.min(numLinhas - 1, linha + 1); i++) {
+                for (let j = Math.max(0, coluna - 1); j <= Math.min(numColunas - 1, coluna + 1); j++) {
+                    if (gridMinado[i][j] === 'mina') {
+                        count++;
+                    }
+                }
+            }
+            return count;
+        }
+
+
+        function abrirQuadradosVazios(linha, coluna) {
+            for (let i = Math.max(0, linha - 1); i <= Math.min(numLinhas - 1, linha + 1); i++) {
+                for (let j = Math.max(0, coluna - 1); j <= Math.min(numColunas - 1, coluna + 1); j++) {
+                    if (!gridMinado[i][j] && !document.querySelector(`[data-index="${i * numColunas + j}"]`).classList.contains('aberto')) {
+                        exibirConteudo(i, j);
+                        if (contarMinasAdjacentes(i, j) === 0) {
+                            abrirQuadradosVazios(i, j);
+                        }
+                    }
+                }
+            }
+        }
+
+
+        function exibirConteudo(linha, coluna) {
+            const index = linha * numColunas + coluna;
+            const quadrado = document.querySelectorAll('.quadrado')[index];
+
+
+            if (gridMinado[linha][coluna] === 'mina') {
+                quadrado.classList.add('mina');
+                quadrado.innerHTML = '&#128163;';
+                alert('Você clicou em uma bomba!😓');
+                reiniciarJogo();
+            } else {
+                const minasAdjacentes = contarMinasAdjacentes(linha, coluna);
+                quadrado.classList.add('aberto');
+
+
+                if (minasAdjacentes > 0) {
+                    quadrado.classList.add('numero');
+                    quadrado.innerHTML = minasAdjacentes;
+                } else {
+                    abrirQuadradosVazios(linha, coluna);
+                }
+
+
+                numQuadradosSemBombas--;
+                if (numQuadradosSemBombas === 0) {
+                    alert('Você venceu!😊');
+                    reiniciarJogo();
+                }
+            }
+        }
+
+
+        function reiniciarJogo() {
+            gridMinado = new Array(numLinhas).fill(null).map(() => new Array(numColunas).fill(null));
+            minasPlantadas = false;
+            numQuadradosSemBombas = 0;
+            const quadrados = document.querySelectorAll('.quadrado');
+            for (const quadrado of quadrados) {
+                quadrado.classList.remove('aberto', 'mina', 'numero');
+                quadrado.innerHTML = '';
+            }
+        }
+
+
+        function clicarQuadrado(linha, coluna) {
+            if (!minasPlantadas) {
+                plantarMinas();
+                minasPlantadas = true;
+            }
+            exibirConteudo(linha, coluna);
+        }
+
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const grid = document.getElementById('grid');
+
+
+            for (let i = 0; i < numLinhas; i++) {
+                gridMinado[i] = new Array(numColunas).fill(null);
+                for (let j = 0; j < numColunas; j++) {
+                    const quadrado = document.createElement('div');
+                    quadrado.classList.add('quadrado');
+                    quadrado.setAttribute('data-index', i * numColunas + j);
+                    quadrado.addEventListener('click', () => clicarQuadrado(i, j));
+                    grid.appendChild(quadrado);
+                }
+            }
+        });
+    </script>
+</body>
+
+
+</html>

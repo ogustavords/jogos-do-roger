@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: rgb(49, 49, 49);
+        }
+        
+        .game-container {
+            text-align: center;
+        }
+        
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(3, 100px);
+            grid-gap: 10px;
+            margin-top: 20px;
+        }
+        
+        .quadrado {
+            width: 100px;
+            height: 100px;
+            background-color: #ddd;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 24px;
+            cursor: pointer;
+        }
+        
+        .botaoComeco {
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+    </style>
+    <title>Jogo da Memória</title>
+</head>
+
+
+<body>
+    <div class="game-container">
+        <h1>Jogo da Memória</h1>
+        <div class="grid" id="grid"></div>
+        <button class="botaoComeco" onclick="iniciarJogo()">Iniciar Jogo</button>
+    </div>
+    <script>
+        const cores = ['#1a0e2e', '#190630', '#220529', '#290525', '#29051d', '#290516'];
+        let sequencia = [];
+        let sequenciaJogador = [];
+        let nivel = 1;
+        let vezJogador = false;
+        let duracaoIntervalo = 300;
+
+
+        function iniciarJogo() {
+            sequencia = [];
+            sequenciaJogador = [];
+            nivel = 1;
+            gerarSequencia();
+            mostrarSequencia();
+        }
+
+
+        function gerarSequencia() {
+            sequencia = [];
+            for (let i = 0; i < nivel; i++) {
+                const indiceAleatorio = Math.floor(Math.random() * cores.length);
+                sequencia.push(indiceAleatorio);
+            }
+        }
+
+
+        function mostrarSequencia() {
+            vezJogador = false;
+            let i = 0;
+            const intervalo = setInterval(() => {
+                if (i >= sequencia.length) {
+                    clearInterval(intervalo);
+                    vezJogador = true;
+                    return;
+                }
+                piscarQuadrado(sequencia[i]);
+                i++;
+            }, duracaoIntervalo);
+        }
+
+
+        function piscarQuadrado(indice) {
+            const quadrado = document.querySelectorAll('.quadrado')[indice];
+            quadrado.style.backgroundColor = cores[indice];
+            setTimeout(() => {
+                quadrado.style.backgroundColor = '#ddd';
+            }, duracaoIntervalo / 2);
+        }
+
+
+        function verificarSequencia() {
+            if (!vezJogador) return;
+
+
+            const indiceQuadradoClicado = parseInt(this.getAttribute('data-index'));
+            sequenciaJogador.push(indiceQuadradoClicado);
+
+
+            piscarQuadrado(indiceQuadradoClicado);
+
+
+            if (sequenciaJogador.length === sequencia.length) {
+                let estaCorreto = true;
+                for (let i = 0; i < sequencia.length; i++) {
+                    if (sequenciaJogador[i] !== sequencia[i]) {
+                        estaCorreto = false;
+                        break;
+                    }
+                }
+
+
+                if (estaCorreto) {
+                    nivel++;
+                    alert(`Parabéns, agora você irá para o nível ${nivel}!!`);
+                    sequenciaJogador = [];
+                    setTimeout(() => {
+                        gerarSequencia();
+                        mostrarSequencia();
+                    }, 1000);
+                } else {
+                    alert('Errou. Tente novamente!');
+                    iniciarJogo();
+                }
+            }
+        }
+
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const grid = document.getElementById('grid');
+
+
+            for (let i = 0; i < cores.length; i++) {
+                const quadrado = document.createElement('div');
+                quadrado.classList.add('quadrado');
+                quadrado.setAttribute('data-index', i);
+                quadrado.addEventListener('click', verificarSequencia);
+                grid.appendChild(quadrado);
+            }
+        });
+    </script>
+</body>
+
+
+</html>

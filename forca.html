@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 0;
+            padding: 20px;
+            background-color: white;
+        }
+        
+        #jogo-container {
+            background-color: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.2);
+            max-width: 400px;
+            margin: 0 auto;
+        }
+        
+        #container-palavra {
+            margin-bottom: 20px;
+        }
+        
+        #container-chute {
+            margin-bottom: 20px;
+        }
+        
+        #container-vidas {
+            margin-top: 20px;
+        }
+        
+        #letras-chutadas {
+            font-size: 18px;
+            margin-top: 10px;
+            color: red;
+        }
+        
+        #resultado {
+            margin-top: 20px;
+        }
+        
+        input[type="text"] {
+            padding: 5px;
+            font-size: 16px;
+        }
+        
+        button {
+            padding: 5px 10px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+    </style>
+    <title>Jogo da Forca</title>
+</head>
+
+
+<body>
+    <div id="jogo-container">
+        <div id="container-palavra">
+            <p id="exibicao-palavra"></p>
+        </div>
+        <div id="container-chute">
+            <input type="text" id="entrada-chute" placeholder="Chute uma letra ou palavra">
+            <button id="botao-chute">Chutar</button>
+        </div>
+        <div id="container-vidas">
+            <p>Vidas restantes: <span id="vidas">10</span></p>
+        </div>
+        <div id="letras-chutadas"></div>
+        <div id="resultado"></div>
+    </div>
+    <script>
+        const palavras = ['computador', 'processador', 'placa', 'cooler', 'pasta', 'javascript', 'mouse', 'teclado', 'fans', 'monitor', 'gabinete', 'mousepad', 'headset', 'pendrive', 'otorrinolaringologista', 'pneumoultramicroscopicossilicovulcanoconiótico'];
+        let palavraEscolhida = "";
+        let letrasChutadas = [];
+        let vidasRestantes = 10;
+        let jogoAtivo = true;
+
+
+        const exibicaoPalavra = document.getElementById("exibicao-palavra");
+        const entradaChute = document.getElementById("entrada-chute");
+        const botaoChute = document.getElementById("botao-chute");
+        const vidasExibicao = document.getElementById("vidas");
+        const letrasChutadasExibicao = document.getElementById("letras-chutadas");
+        const resultadoExibicao = document.getElementById("resultado");
+
+
+        iniciarJogo();
+
+
+        function iniciarJogo() {
+            palavraEscolhida = palavras[Math.floor(Math.random() * palavras.length)];
+            letrasChutadas = [];
+            vidasRestantes = 10;
+            jogoAtivo = true;
+
+
+            exibicaoPalavra.textContent = "_ ".repeat(palavraEscolhida.length).trim();
+            vidasExibicao.textContent = vidasRestantes;
+            letrasChutadasExibicao.textContent = "";
+            resultadoExibicao.textContent = "";
+            entradaChute.value = "";
+
+
+            entradaChute.disabled = false;
+            botaoChute.disabled = false;
+        }
+
+
+        botaoChute.addEventListener("click", () => {
+            if (!jogoAtivo) {
+                iniciarJogo();
+                return;
+            }
+
+
+            const chute = entradaChute.value.toLowerCase();
+
+
+            if (!chute) {
+                return;
+            }
+
+
+            if (chute.length === 1) {
+                if (letrasChutadas.includes(chute)) {
+                    return;
+                }
+
+
+                letrasChutadas.push(chute);
+                atualizaLetrasChutadas();
+
+
+                if (palavraEscolhida.includes(chute)) {
+                    atualizaExibicaoPalavra();
+                } else {
+                    vidasRestantes--;
+                    vidasExibicao.textContent = vidasRestantes;
+
+
+                    if (vidasRestantes === 0) {
+                        finalizaJogo(false);
+                    }
+                }
+
+
+                if (exibicaoPalavra.textContent === palavraEscolhida.split("").join(" ")) {
+                    finalizaJogo(true);
+                }
+            } else {
+                if (chute === palavraEscolhida) {
+                    finalizaJogo(true);
+                } else {
+                    vidasRestantes = 0;
+                    vidasExibicao.textContent = vidasRestantes;
+                    finalizaJogo(false);
+                }
+            }
+
+
+            entradaChute.value = "";
+        });
+
+
+        function atualizaExibicaoPalavra() {
+            let textoExibicao = "";
+
+
+            for (const letra of palavraEscolhida) {
+                if (letrasChutadas.includes(letra)) {
+                    textoExibicao += letra + " ";
+                } else {
+                    textoExibicao += "_ ";
+                }
+            }
+
+
+            exibicaoPalavra.textContent = textoExibicao.trim();
+        }
+
+
+        function atualizaLetrasChutadas() {
+            letrasChutadasExibicao.textContent = "Chutes: " + letrasChutadas.join(", ");
+        }
+
+
+        function finalizaJogo(vitoria) {
+            jogoAtivo = false;
+
+
+            if (vitoria) {
+                resultadoExibicao.textContent = "Você venceu!!!!";
+            } else {
+                resultadoExibicao.textContent = `A palavra era "${palavraEscolhida}". Tente novamente.`;
+            }
+
+
+            entradaChute.disabled = true;
+            botaoChute.textContent = "Jogar Novamente";
+        }
+    </script>
+</body>
+
+
+</html>

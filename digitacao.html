@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <title>Jogo de Digitação</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #474747;
+        }
+        
+        .main {
+            text-align: center;
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 15px black;
+        }
+        
+        .exibicao-palavra {
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+        
+        .caixa-input {
+            padding: 5px;
+            font-size: 16px;
+            width: 100%;
+            margin-bottom: 10px;
+        }
+        
+        .temporizador {
+            font-size: 24px;
+        }
+        
+        .pontuacao {
+            font-size: 18px;
+            margin-top: 10px;
+        }
+        
+        .botao-recomecar {
+            background-color: #580143;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+
+<body>
+    <div class="main">
+        <div class="exibicao-palavra" id="exibicaoPalavra">Palavra</div>
+        <input type="text" class="caixa-input" id="caixaInput" autofocus>
+        <div class="temporizador" id="temporizador">60</div>
+        <div class="pontuacao" id="pontuacao">Pontuação: 0</div>
+        <button class="botao-recomecar" id="botaoRecomecar">Recomeçar</button>
+    </div>
+    <script>
+        const palavras = ['computador', 'processador', 'placa', 'cooler', 'pasta', 'javascript', 'mouse', 'teclado', 'fans', 'monitor', 'gabinete', 'mousepad', 'headset', 'pendrive', 'otorrinolaringologista', 'pneumoultramicroscopicossilicovulcanoconiótico'];
+        let palavrasAleatorias = [];
+        let indicePalavraAtual = 0;
+        let palavraAtual = "";
+        let pontuacao = 0;
+        let temporizador = 60;
+        let intervaloJogo;
+
+
+        const exibicaoPalavra = document.getElementById('exibicaoPalavra');
+        const caixaInput = document.getElementById('caixaInput');
+        const temporizadorDisplay = document.getElementById('temporizador');
+        const pontuacaoDisplay = document.getElementById('pontuacao');
+        const botaoRecomecar = document.getElementById('botaoRecomecar');
+
+
+        function obterPalavrasAleatorias() {
+            palavrasAleatorias = palavras.slice();
+            palavrasAleatorias.sort(() => Math.random() - 0.5);
+        }
+
+
+        function atualizarExibicaoPalavra() {
+            palavraAtual = palavrasAleatorias[indicePalavraAtual];
+            exibicaoPalavra.textContent = palavraAtual;
+        }
+
+
+        function atualizarPontuacao() {
+            pontuacaoDisplay.textContent = `Pontuação: ${pontuacao}`;
+        }
+
+
+        function iniciarJogo() {
+            clearInterval(intervaloJogo);
+            caixaInput.value = '';
+            obterPalavrasAleatorias();
+            indicePalavraAtual = 0;
+            atualizarExibicaoPalavra();
+            pontuacao = 0;
+            temporizador = 60;
+            temporizadorDisplay.textContent = temporizador;
+            atualizarPontuacao();
+            intervaloJogo = setInterval(atualizarTemporizador, 1000);
+            caixaInput.disabled = false;
+            caixaInput.focus();
+        }
+
+
+        function atualizarTemporizador() {
+            temporizador--;
+            temporizadorDisplay.textContent = temporizador;
+            if (temporizador <= 0) {
+                encerrarJogo();
+            }
+        }
+
+
+        function encerrarJogo() {
+            clearInterval(intervaloJogo);
+            exibicaoPalavra.textContent = 'Fim de Jogo';
+            caixaInput.disabled = true;
+        }
+
+
+        function verificarEntrada() {
+            const entradaUsuario = caixaInput.value.toLowerCase();
+            if (entradaUsuario === palavraAtual) {
+                pontuacao++;
+                indicePalavraAtual = (indicePalavraAtual + 1) % palavras.length;
+                atualizarExibicaoPalavra();
+                atualizarPontuacao();
+                caixaInput.value = '';
+            } else if (entradaUsuario.length === palavraAtual.length) {
+                temporizador -= 3;
+            }
+        }
+
+
+        function recomecarJogo() {
+            clearInterval(intervaloJogo);
+            iniciarJogo();
+        }
+        caixaInput.addEventListener('input', verificarEntrada);
+        botaoRecomecar.addEventListener('click', recomecarJogo);
+        iniciarJogo();
+    </script>
+</body>
+
+
+</html>

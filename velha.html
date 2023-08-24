@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+            background-color: rgb(49, 49, 49);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        
+        .game-container {
+            text-align: center;
+            color: white;
+        }
+        
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(3, 100px);
+            grid-gap: 10px;
+            margin-top: 20px;
+        }
+        
+        .cell {
+            width: 100px;
+            height: 100px;
+            background-color: #ddd;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 48px;
+            cursor: pointer;
+            transition: background-color 0.3s ease-in-out;
+        }
+        
+        .cell.x {
+            color: rgb(124, 0, 114);
+        }
+        
+        .cell.o {
+            color: rgb(60, 0, 128);
+        }
+        
+        .cell.winner {
+            background-color: #c2ffc2;
+        }
+        
+        .play-again {
+            margin-top: 20px;
+        }
+        
+        h1 {
+            margin-bottom: 20px;
+        }
+        
+        .botaoComeco {
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+    </style>
+    <title>Jogo da Velha</title>
+</head>
+
+
+<body>
+    <div class="game-container">
+        <h1>Jogo da Velha</h1>
+        <div class="grid" id="grid">
+            <div class="cell"></div>
+            <div class="cell"></div>
+            <div class="cell"></div>
+            <div class="cell"></div>
+            <div class="cell"></div>
+            <div class="cell"></div>
+            <div class="cell"></div>
+            <div class="cell"></div>
+            <div class="cell"></div>
+        </div>
+        <div class="play-again">
+            <button class="botaoComeco" id="reiniciar">Jogar Novamente</button>
+        </div>
+    </div>
+    <script>
+        const cells = document.querySelectorAll('.cell');
+        const reiniciarBotao = document.getElementById('reiniciar');
+        let jogadorAtual = 'x';
+        let jogoTerminou = false;
+
+
+        cells.forEach(cell => {
+            cell.addEventListener('click', () => {
+                if (!cell.classList.contains('x') && !cell.classList.contains('o') && !jogoTerminou) {
+                    cell.classList.add(jogadorAtual);
+                    cell.textContent = jogadorAtual.toUpperCase();
+                    checarVencedor();
+                    jogadorAtual = jogadorAtual === 'x' ? 'o' : 'x';
+                }
+            });
+        });
+
+
+        function checarVencedor() {
+            const combinacoesVencedoras = [
+                [0, 1, 2],
+                [3, 4, 5],
+                [6, 7, 8],
+                [0, 3, 6],
+                [1, 4, 7],
+                [2, 5, 8],
+                [0, 4, 8],
+                [2, 4, 6]
+            ];
+
+
+            for (const combinacao of combinacoesVencedoras) {
+                const [a, b, c] = combinacao;
+                if (cells[a].classList.contains(jogadorAtual) &&
+                    cells[b].classList.contains(jogadorAtual) &&
+                    cells[c].classList.contains(jogadorAtual)) {
+                    anunciarVencedor(jogadorAtual, combinacao);
+                    return;
+                }
+            }
+
+
+            if ([...cells].every(cell => cell.classList.contains('x') || cell.classList.contains('o'))) {
+                anunciarVencedor('empate');
+            }
+        }
+
+
+        function anunciarVencedor(jogador, combinacao) {
+            jogoTerminou = true;
+
+
+            if (jogador === 'empate') {
+                alert('O jogo terminou em empate!');
+            } else {
+                alert(`Jogador ${jogador.toUpperCase()} venceu!`);
+                combinacao.forEach(index => cells[index].classList.add('winner'));
+            }
+
+
+            reiniciarBotao.style.display = 'block';
+        }
+
+
+        reiniciarBotao.addEventListener('click', () => {
+            cells.forEach(cell => {
+                cell.classList.remove('x', 'o', 'winner');
+                cell.textContent = '';
+            });
+
+
+            jogadorAtual = 'x';
+            jogoTerminou = false;
+            reiniciarBotao.style.display = 'none';
+        });
+    </script>
+</body>
+
+
+</html>
