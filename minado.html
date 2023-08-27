@@ -5,6 +5,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Campo Minado</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -52,16 +53,35 @@
         .quadrado.numero {
             color: #333;
         }
+        
+        #botaoVoltar {
+            padding: 5px 10px;
+            background-color: rgba(0, 0, 0, 0.5);
+            border-radius: 5px;
+        }
+        
+        #botaoComecar {
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #d814ff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 20px;
+        }
     </style>
     <title>Campo Minado</title>
 </head>
 
 
 <body>
+    <a href="index.html" id="botaoVoltar" style="position: absolute; top: 20px; left: 20px; text-decoration: none; color: white;">Voltar</a>
+
     <div class="game-container">
         <h1>Campo Minado</h1>
         <div class="grid" id="grid"></div>
-        <button class="botaoComeco" onclick="iniciarJogo()">Iniciar Jogo</button>
+        <button id="botaoComecar" class="botaoComecar" onclick="iniciarJogo()">Iniciar Jogo</button>
     </div>
     <script>
         const numLinhas = 8;

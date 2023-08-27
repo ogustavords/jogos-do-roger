@@ -1,165 +1,160 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="en">
+
+
 
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="style.css">
-    <title>Jogo de Digitação</title>
+    <link rel="stylesheet" href="">
+    <title>Jogo da reação</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            font-family: Arial, Helvetica, sans-serif;
+            background-image: url(https://cdn.discordapp.com/attachments/1109266501879476294/1137940043156164670/image.png);
+            color: white;
+        }
+        
+        #main {
+            width: 400px;
+            height: 400px;
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
-            margin: 0;
-            background-color: #474747;
+            background-color: lightgray;
         }
         
-        .main {
-            text-align: center;
-            background-color: white;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0px 0px 15px black;
+        #quadrado {
+            width: 200px;
+            height: 200px;
         }
         
-        .exibicao-palavra {
-            font-size: 24px;
-            margin-bottom: 20px;
+        .ativo {
+            background-color: green;
         }
         
-        .caixa-input {
-            padding: 5px;
+        .inativo {
+            background-color: lightgray;
+        }
+        
+        #botaoVoltar {
+            padding: 5px 10px;
+            background-color: rgba(29, 29, 29, 0.979);
+            border-radius: 5px;
+        }
+        
+        #botaoComecar {
+            padding: 10px 20px;
             font-size: 16px;
-            width: 100%;
-            margin-bottom: 10px;
-        }
-        
-        .temporizador {
-            font-size: 24px;
-        }
-        
-        .pontuacao {
-            font-size: 18px;
-            margin-top: 10px;
-        }
-        
-        .botao-recomecar {
-            background-color: #580143;
+            background-color: #d814ff;
             color: white;
             border: none;
-            padding: 10px 20px;
-            text-align: center;
-            text-decoration: none;
-            display: inline-block;
-            font-size: 16px;
             border-radius: 5px;
             cursor: pointer;
+            margin-top: 20px;
         }
     </style>
 </head>
 
 
 <body>
-    <div class="main">
-        <div class="exibicao-palavra" id="exibicaoPalavra">Palavra</div>
-        <input type="text" class="caixa-input" id="caixaInput" autofocus>
-        <div class="temporizador" id="temporizador">60</div>
-        <div class="pontuacao" id="pontuacao">Pontuação: 0</div>
-        <button class="botao-recomecar" id="botaoRecomecar">Recomeçar</button>
+    <a href="index.html" id="botaoVoltar" style="position: absolute; top: 20px; left: 20px; text-decoration: none; color: white;">Voltar</a>
+    <div id="main" class="inativo">
+        <div id="quadrado" class="inativo"></div>
     </div>
+    <button id="botaoComecar" class="botaoComecar">Clique aqui para começar!!!</button>
+    <div id="resultado"></div>
+    <script src=""></script>
+
+
+
+
     <script>
-        const palavras = ['computador', 'processador', 'placa', 'cooler', 'pasta', 'javascript', 'mouse', 'teclado', 'fans', 'monitor', 'gabinete', 'mousepad', 'headset', 'pendrive', 'otorrinolaringologista', 'pneumoultramicroscopicossilicovulcanoconiótico'];
-        let palavrasAleatorias = [];
-        let indicePalavraAtual = 0;
-        let palavraAtual = "";
-        let pontuacao = 0;
-        let temporizador = 60;
-        let intervaloJogo;
+        const quadrado = document.getElementById("quadrado");
+        const gameContainer = document.getElementById("main");
+        const startButton = document.getElementById("botaoComecar");
+        const resultadoDiv = document.getElementById("resultado");
+        let tempoInicial, tempoFinal, clicar = false;
 
 
-        const exibicaoPalavra = document.getElementById('exibicaoPalavra');
-        const caixaInput = document.getElementById('caixaInput');
-        const temporizadorDisplay = document.getElementById('temporizador');
-        const pontuacaoDisplay = document.getElementById('pontuacao');
-        const botaoRecomecar = document.getElementById('botaoRecomecar');
 
 
-        function obterPalavrasAleatorias() {
-            palavrasAleatorias = palavras.slice();
-            palavrasAleatorias.sort(() => Math.random() - 0.5);
+        function getRandomTime(min, max) {
+            return Math.floor(Math.random() * (max - min + 1)) + min;
         }
 
 
-        function atualizarExibicaoPalavra() {
-            palavraAtual = palavrasAleatorias[indicePalavraAtual];
-            exibicaoPalavra.textContent = palavraAtual;
+
+
+        function setCorVermelha() {
+            quadrado.style.backgroundColor = "red";
+            clicar = true;
         }
 
 
-        function atualizarPontuacao() {
-            pontuacaoDisplay.textContent = `Pontuação: ${pontuacao}`;
+
+
+        function setCorVerde() {
+            quadrado.style.backgroundColor = "green";
+            tempoInicial = new Date();
+            gameContainer.addEventListener("click", handleGameClick);
         }
 
 
-        function iniciarJogo() {
-            clearInterval(intervaloJogo);
-            caixaInput.value = '';
-            obterPalavrasAleatorias();
-            indicePalavraAtual = 0;
-            atualizarExibicaoPalavra();
-            pontuacao = 0;
-            temporizador = 60;
-            temporizadorDisplay.textContent = temporizador;
-            atualizarPontuacao();
-            intervaloJogo = setInterval(atualizarTemporizador, 1000);
-            caixaInput.disabled = false;
-            caixaInput.focus();
+
+
+        function resetGame() {
+            quadrado.style.backgroundColor = "lightgray";
+            resultadoDiv.innerText = "";
+            gameContainer.removeEventListener("click", handleGameClick);
+            clicar = false;
         }
 
 
-        function atualizarTemporizador() {
-            temporizador--;
-            temporizadorDisplay.textContent = temporizador;
-            if (temporizador <= 0) {
-                encerrarJogo();
+
+
+        function handleGameClick() {
+            if (clicar) {
+                tempoFinal = new Date();
+                const diferencaTempo = tempoFinal - tempoInicial;
+
+
+
+
+                if (diferencaTempo > 1000) {
+                    const tempoSegundos = diferencaTempo / 1000;
+                    resultadoDiv.innerText = `Tempo em segundos: ${tempoSegundos.toFixed(2)}s ⠀⠀⠀⠀⠀⠀⠀⠀(Espere voltar para tentar novamente)`;
+                } else {
+                    resultadoDiv.innerText = `Tempo em milisegundos: ${diferencaTempo}ms ⠀⠀⠀⠀⠀⠀⠀⠀(Espere voltar para tentar novamente)`;
+                }
+
+
+
+
+                setTimeout(resetGame, 1000);
             }
         }
 
 
-        function encerrarJogo() {
-            clearInterval(intervaloJogo);
-            exibicaoPalavra.textContent = 'Fim de Jogo';
-            caixaInput.disabled = true;
-        }
 
 
-        function verificarEntrada() {
-            const entradaUsuario = caixaInput.value.toLowerCase();
-            if (entradaUsuario === palavraAtual) {
-                pontuacao++;
-                indicePalavraAtual = (indicePalavraAtual + 1) % palavras.length;
-                atualizarExibicaoPalavra();
-                atualizarPontuacao();
-                caixaInput.value = '';
-            } else if (entradaUsuario.length === palavraAtual.length) {
-                temporizador -= 3;
-            }
-        }
-
-
-        function recomecarJogo() {
-            clearInterval(intervaloJogo);
-            iniciarJogo();
-        }
-        caixaInput.addEventListener('input', verificarEntrada);
-        botaoRecomecar.addEventListener('click', recomecarJogo);
-        iniciarJogo();
+        startButton.addEventListener("click", () => {
+            setCorVermelha();
+            setTimeout(setCorVerde, 1000);
+        });
     </script>
+
+
 </body>
+
+
 
 
 </html>

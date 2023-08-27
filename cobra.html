@@ -5,6 +5,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Snake Game</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -64,12 +65,19 @@
             margin-top: 10px;
             color: white;
         }
+        
+        #botaoVoltar {
+            padding: 5px 10px;
+            background-color: rgba(0, 0, 0, 0.5);
+            border-radius: 5px;
+        }
     </style>
     <title>Jogo da Cobrinha</title>
 </head>
 
 
 <body>
+    <a href="index.html" id="botaoVoltar" style="position: absolute; top: 20px; left: 20px; text-decoration: none; color: white;">Voltar</a>
     <div class="game-container">
         <div class="grid" id="grid"></div>
         <button class="btn" id="startButton">Iniciar</button>

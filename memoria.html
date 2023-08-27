@@ -42,12 +42,18 @@
         .botaoComeco {
             padding: 10px 20px;
             font-size: 16px;
-            background-color: #007bff;
+            background-color: #ff01b3;
             color: white;
             border: none;
             border-radius: 5px;
             cursor: pointer;
             margin-top: 20px;
+        }
+        
+        #botaoVoltar {
+            padding: 5px 10px;
+            background-color: rgba(0, 0, 0, 0.5);
+            border-radius: 5px;
         }
     </style>
     <title>Jogo da Memória</title>
@@ -55,6 +61,8 @@
 
 
 <body>
+    <a href="index.html" id="botaoVoltar" style="position: absolute; top: 20px; left: 20px; text-decoration: none; color: white;">Voltar</a>
+
     <div class="game-container">
         <h1>Jogo da Memória</h1>
         <div class="grid" id="grid"></div>

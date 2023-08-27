@@ -5,13 +5,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jogo da forca</title>
     <style>
         body {
             font-family: Arial, sans-serif;
             text-align: center;
             margin: 0;
-            padding: 20px;
-            background-color: white;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: rgb(49, 49, 49);
         }
         
         #jogo-container {
@@ -20,19 +25,22 @@
             padding: 20px;
             box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.2);
             max-width: 400px;
-            margin: 0 auto;
         }
         
-        #container-palavra {
-            margin-bottom: 20px;
+        input[type="text"] {
+            padding: 5px;
+            font-size: 16px;
+            width: 60%;
         }
         
-        #container-chute {
-            margin-bottom: 20px;
-        }
-        
-        #container-vidas {
-            margin-top: 20px;
+        button {
+            padding: 5px 10px;
+            font-size: 16px;
+            cursor: pointer;
+            background-color: #ff25ed;
+            color: white;
+            border: none;
+            border-radius: 5px;
         }
         
         #letras-chutadas {
@@ -43,17 +51,18 @@
         
         #resultado {
             margin-top: 20px;
+            font-size: 18px;
         }
         
-        input[type="text"] {
-            padding: 5px;
-            font-size: 16px;
-        }
-        
-        button {
+        #botaoVoltar {
+            position: absolute;
+            top: 20px;
+            left: 20px;
             padding: 5px 10px;
-            font-size: 16px;
-            cursor: pointer;
+            background-color: rgba(0, 0, 0, 0.5);
+            border-radius: 5px;
+            text-decoration: none;
+            color: white;
         }
     </style>
     <title>Jogo da Forca</title>
@@ -61,15 +70,16 @@
 
 
 <body>
+    <a href="index.html" id="botaoVoltar">Voltar</a>
     <div id="jogo-container">
-        <div id="container-palavra">
+        <div>
             <p id="exibicao-palavra"></p>
         </div>
-        <div id="container-chute">
+        <div>
             <input type="text" id="entrada-chute" placeholder="Chute uma letra ou palavra">
             <button id="botao-chute">Chutar</button>
         </div>
-        <div id="container-vidas">
+        <div>
             <p>Vidas restantes: <span id="vidas">10</span></p>
         </div>
         <div id="letras-chutadas"></div>
